@@ -16,11 +16,6 @@ class Main{
         long startTime = System.nanoTime();
 
 
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-        System.out.print("Zeit: ");
-        System.out.println(duration);
-
 
         LogicController.map("map.osm");
         Display.create();
