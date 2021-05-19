@@ -62,6 +62,8 @@ public class Pathfinding{
                     mindist[2] = buffer;
                     found = true;
                     System.out.println("found");
+                    return  (ArrayList<Object[]>) mindist[2];
+
                 }
                 else{
                     //Iterates through a list of possible connections around the current node

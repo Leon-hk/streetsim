@@ -175,9 +175,21 @@ public class MapParser extends DefaultHandler{
                 }
             }
 
+
             else if (attributes.getValue("k").equals("landuse") || attributes.getValue("k").equals("area")) {
                 landuse = attributes.getValue("v");
+
             }
+            else if (attributes.getValue("k").equals("landcover") || attributes.getValue("k").equals("area")) {
+                landuse = attributes.getValue("v");
+
+            }
+            else if (attributes.getValue("k").equals("natural") || attributes.getValue("k").equals("area")) {
+                landuse = attributes.getValue("v");
+
+
+            }
+
         }
 
         if (qName.equalsIgnoreCase("nd") && way) {
