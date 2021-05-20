@@ -7,11 +7,13 @@ import java.util.Queue;
 
 public class Terrain {
     public String type;
+    public Point[] nodes;
     public MyObject object;
     private Color color;
     public Terrain(String type, Point[] nodes){
         boolean draw = true;
         this.type = type;
+        this.nodes = nodes;
         switch(this.type) {
 
             case "residential":

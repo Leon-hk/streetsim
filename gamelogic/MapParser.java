@@ -22,6 +22,7 @@ public class MapParser extends DefaultHandler{
     private StringBuilder currentValue = new StringBuilder();
     ArrayList<Street> streets;
     ArrayList<Terrain> terrain;
+    Map<String,Terrain> terrain_cache = new HashMap<>();
     ArrayList<String> allowed = new ArrayList<>();
     double maxlat;
     double maxlon;
@@ -34,11 +35,14 @@ public class MapParser extends DefaultHandler{
     Map<String, double[]> map = new HashMap<>();
     private ArrayList<String> ids;
     boolean way = false;
+    boolean relation = false;
+    private ArrayList<String> members;
 
     int lanesback = 0;
     int lanesforw = 0;
     int speed = 0;
     String name;
+    String id;
     ArrayList<Point> nodes;
     String type;
     String landuse;
@@ -129,6 +133,7 @@ public class MapParser extends DefaultHandler{
 
         if (qName.equalsIgnoreCase("way")) {
             name = "";
+            id = attributes.getValue("id");
             nodes = new ArrayList<>();
             type = "";
             landuse = "a";
@@ -175,22 +180,22 @@ public class MapParser extends DefaultHandler{
                 }
             }
 
-
-            else if (attributes.getValue("k").equals("landuse") || attributes.getValue("k").equals("area")) {
-                landuse = attributes.getValue("v");
-
-            }
-            else if (attributes.getValue("k").equals("landcover") || attributes.getValue("k").equals("area")) {
-                landuse = attributes.getValue("v");
-
-            }
-            else if (attributes.getValue("k").equals("natural") || attributes.getValue("k").equals("area")) {
-                landuse = attributes.getValue("v");
-
-
-            }
-
         }
+
+        if (qName.equalsIgnoreCase("tag") && (way || relation)) {
+            if (attributes.getValue("k").equals("landuse") || attributes.getValue("k").equals("area")) {
+                landuse = attributes.getValue("v");
+
+            } else if (attributes.getValue("k").equals("landcover") || attributes.getValue("k").equals("area")) {
+                landuse = attributes.getValue("v");
+
+            } else if (attributes.getValue("k").equals("natural") || attributes.getValue("k").equals("area")) {
+                landuse = attributes.getValue("v");
+
+            }
+        }
+
+
 
         if (qName.equalsIgnoreCase("nd") && way) {
 
@@ -201,6 +206,18 @@ public class MapParser extends DefaultHandler{
             ids.add(attributes.getValue("ref"));
             nodes.add(point);
             cords.put(attributes.getValue("ref"), point);
+        }
+
+        if (qName.equalsIgnoreCase("relation")) {
+            relation = true;
+            landuse = "";
+            members = new ArrayList<>();
+        }
+
+        if (qName.equalsIgnoreCase("member") && relation) {
+            if (attributes.getValue("role").equals("outer")) {
+                members.add(attributes.getValue("ref"));
+            }
         }
     }
 
@@ -256,8 +273,19 @@ public class MapParser extends DefaultHandler{
                     connections.put(ids.get(i),new Object[] {ids.size()-1 + (int) connections.get(ids.get(i))[0], newarray});
 
                 }
-            } else if (!landuse.equals("")) {
+            } else if (!landuse.equals("a")) {
                 terrain.add(new Terrain(landuse, nodes.toArray(new Point[0])));
+            } else {
+                terrain_cache.put(id, new Terrain("unset", nodes.toArray(new Point[0])));
+            }
+        } else if (qName.equalsIgnoreCase("relation")) {
+            relation = false;
+            if (!landuse.equals("")) {
+                for(String member: members) {
+                    try {
+                        terrain.add(new Terrain(landuse, terrain_cache.get(member).nodes));
+                    } catch (Exception e) {}
+                }
             }
         }
 
