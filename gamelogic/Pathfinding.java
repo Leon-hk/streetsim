@@ -30,7 +30,6 @@ public class Pathfinding{
         }
         //Searches starting points around the first node
         for(Object obj : nodeconnections.get(id1)){
-
             String obs = (String)((Object[]) obj)[0]; //id of current node to check
             if(connections.get(obs) != null) {
                 ArrayList<Object> buffer = new ArrayList<>();
@@ -51,7 +50,6 @@ public class Pathfinding{
             for(Object[] op : open2){
                 if(possible_crossings.contains(op[0])){
                     //if yes, the current path is saved as the shortest path yet
-
                     mindist = op.clone();
                     ArrayList<Object[]> buffer = new ArrayList<Object[]>((ArrayList<Object[]>)mindist[2]);
                     for(Object conn : (Object[]) connections.get(op[0])[1]){
@@ -68,10 +66,7 @@ public class Pathfinding{
                 else{
                     //Iterates through a list of possible connections around the current node
                     for(Object node2 :  ((Object[]) connections.get((String) op[0])[1])){
-
-                        //idk why java doesn´t let me do this normally, but this way it works
                         Object[] node = (Object[]) node2;
-
                         if(!travelled.contains(node[0])) {
                             //buffer list of travelled path
                             ArrayList<Object[]> buffer = new ArrayList<Object[]>((ArrayList<Object[]>)op[2]);
