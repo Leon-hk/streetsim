@@ -6,7 +6,7 @@ public class Pathfinding{
 //Used for pathfinding of cars, takes Ids of starting and end node, a list of intersections, a list of connections between all nodes and a list of coordinates of all nodes
 //returns an arraylist of Points for the car on the grid to move to
     public static ArrayList<Object[]> find_path(String id1, String id2){
-        System.out.println("pathfinding now");
+
         Map<String,Object[]> connections = (Map<String,Object[]>) LogicController.connections[0];
         Map<String,Object[]> nodeconnections = (Map<String,Object[]>) LogicController.connections[1];
 
@@ -59,7 +59,7 @@ public class Pathfinding{
                     }
                     mindist[2] = buffer;
                     found = true;
-                    System.out.println("found");
+
                     return  (ArrayList<Object[]>) mindist[2];
 
                 }
@@ -88,7 +88,7 @@ public class Pathfinding{
         }
         //after no possible routes remain the shortest (or no) path is returned
 
-        System.out.println("done \n");
+
         return (ArrayList<Object[]>) mindist[2];
     }
 }

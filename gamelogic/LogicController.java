@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class LogicController implements Runnable{
+public class LogicController{
 
 
 
@@ -88,16 +88,6 @@ public class LogicController implements Runnable{
     }
 
 
-
-    @Override
-    public void run() {
-        while(running) {
-
-
-
-            //TODO update cars and roads for zoom correction
-        }
-    }
     public LogicController(){
         start();
     }

@@ -21,9 +21,7 @@ public class Terrain {
 
                 break;
 
-            case "trees":
-                System.out.println("trees");
-                break;
+
 
             case "farmland":
             case "brownfield":
@@ -33,7 +31,7 @@ public class Terrain {
 
             case "forest":
             case "wood":
-                System.out.println("test");
+
                 this.color = new Color(68, 113, 0);
                 break;
 

@@ -12,18 +12,20 @@ public class Car {
     double reactiontime = (Math.random() * ((1.3 - 0.8) + 1)) + 0.8;
     double breakingfactor = Math.random() * ((1-0.5)+1) + 0.5;
     double acceleration = Math.random() * ((1-0.5)+1) + 0.5;
-    final int[] xa  = new int[] {-400,400,400,-400};
-    final int[] ya  = new int[] {-400,-400,400,400};
+    final int[] xa  = new int[] {-40,40,40,-40};
+    final int[] ya  = new int[] {-40,-40,40,40};
     Polygon poly1 = new Polygon(xa, ya, 4);
     int x = 0;
     int y = 0;
+    private boolean dxp = false;
+    private boolean dyp = false;
 
     ArrayList<Object[]> path;
     Street currentstreet;
     int streetindex = 0;
-    int lane = 0;
+    public int lane = 0;
     int dir = 0;
-    Point[][] lanes;
+    Lane[] lanes;
     int nodeinstreet = 0;
 
 
@@ -32,6 +34,7 @@ public class Car {
     MyObject object;
     public Car(String origin,String destination){
         path = gamelogic.Pathfinding.find_path(origin,destination);
+
         currentstreet = (Street)path.get(streetindex)[2];
         streetindex++;
         if((int)(path.get(streetindex)[3]) == 1){
@@ -42,6 +45,9 @@ public class Car {
             lanes = currentstreet.backward;
             dir = -1;
         }
+        lane = 0;
+        lanes[lane].cars.add(this);
+
         nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(origin));
 
         x = cords.get(origin).x;
@@ -49,6 +55,7 @@ public class Car {
 
         object=  new MyObject(new Polygon[] {poly1},1,new Color(110, 255, 78));
         move(x,y);
+
         LogicController.cars.add(object);
 
     }
@@ -73,25 +80,47 @@ public class Car {
     public boolean update(){
         if(streetindex < path.size()+1){
 
+            if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])+dir){
 
-            nodeinstreet += dir;
+                int dx = lanes[lane].points[nodeinstreet].x - x;
+                int dy = lanes[lane].points[nodeinstreet].y - y;
 
-            if(nodeinstreet<lanes[0].length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])+dir){
-                //int dx = lanes[lane][nodeinstreet].x - x;
-                //int dy = lanes[lane][nodeinstreet].y - y;
+                if((dx > 0 != dxp) | (dy >0 != dyp)  | (dx == 0) | (dy == 0) ){
+                    move(lanes[lane].points[nodeinstreet].x, lanes[lane].points[nodeinstreet].y);
+                    nodeinstreet += dir;
+                    System.out.println(dx);
+                    if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1) {
+                        dx = lanes[lane].points[nodeinstreet].x - x;
+                        dy = lanes[lane].points[nodeinstreet].y - y;
 
-                //double scale = 1000 / Math.sqrt(dx*dx + dy*dy) ;
+                        if (dx > 0) {
+                            dxp = true;
+                        } else {
+                            dxp = false;
+                        }
+                        if (dy > 0) {
+                            dyp = true;
+                        } else {
+                            dyp = false;
+                        }
+                    }
+                    update();
+                }
+                else {
+                    double scale = 100 / Math.sqrt(dx * dx + dy * dy);
 
 
-                //move((int) (x + dx*scale), (int) (y + dy*scale));
-                move(lanes[lane][nodeinstreet].x,lanes[lane][nodeinstreet].y);
+                    move((int) (x + dx * scale), (int) (y + dy * scale));
+                }
+                //move(lanes[lane].points[nodeinstreet].x,lanes[lane].points[nodeinstreet].y);
+
 
             }
             else{
                 if(streetindex >= path.size()){return false;}
 
                 currentstreet = (Street) path.get(streetindex)[2];
-
+                lanes[lane].cars.remove(this);
                 if((int)(path.get(streetindex)[3]) == 1){
                     lanes = currentstreet.forward;
                     dir = 1;
@@ -102,14 +131,21 @@ public class Car {
                 }
                 nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(path.get(streetindex-1)[0]));
                 streetindex++;
+                lane = 0;
+                lanes[lane].cars.add(this);
 
+                int dx = lanes[lane].points[nodeinstreet].x - x;
+                int dy = lanes[lane].points[nodeinstreet].y - y;
+
+                if(dx >0) {dxp=true;}else{dxp=false;}
+                if(dy >0) {dyp=true;}else{dyp=false;}
 
                 update();
 
             }
         }
         else{
-            System.out.println("end");
+
             //reached end of destination
             LogicController.cars.remove(object);
             object = null;
@@ -117,9 +153,5 @@ public class Car {
         }
     return true;
     }
-    public Car(double react,double breaking, double accel){
-        this.reactiontime = react;
-        this.breakingfactor = breaking;
-        this.acceleration = accel;
-    }
+
 }

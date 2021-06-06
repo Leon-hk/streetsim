@@ -9,10 +9,8 @@ class Main {
         LogicController logic = new LogicController();
 
 
-        for(int i = 0;i<100;i++) {
+
             LogicController.carai.add(new Car("8313271112", "5167797079"));
-            LogicController.carai.add(new Car("8313271112", "4911327313"));
-            LogicController.carai.add(new Car("4911327296", "4911327300"));
-        }
+
     }
 }

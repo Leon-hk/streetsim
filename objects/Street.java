@@ -9,8 +9,8 @@ public class Street {
 
     public String name;
     //street directions
-    public Point[][] forward; //nodes ++ each lane: Point[]
-    public Point[][] backward; //nodes --
+    public Lane[] forward; //nodes ++ each lane: Point[]
+    public Lane[] backward; //nodes --
     public int maxspeed;
     public Point[] nodes;
     public String type;
@@ -24,8 +24,19 @@ public class Street {
         this.nodes = nodes;
         this.type = type;
         this.color = Color.BLACK;
-        forward = new Point[lanesforward][nodes.length];
-        backward = new Point[lanesbackward][nodes.length];
+
+        forward = new Lane[lanesforward];
+
+        for (int i = 0;i<lanesforward;i++) {
+            forward[i] = new Lane(nodes.length);
+        }
+
+
+            backward = new Lane[lanesbackward];
+        for (int i = 0;i<lanesbackward;i++) {
+            backward[i] = new Lane(nodes.length);
+        }
+
         this.maxspeed = maxspeed;
 
         switch(this.type){
@@ -86,13 +97,13 @@ public class Street {
 
             for(int j = 0; j<lanesforward;j++){
 
-                forward[j][i] = new Point(nodes[i].x - offx2 / lanesforward * j,nodes[i].y - offy2 / lanesforward * j);
-                forward[j][i+1] = new Point(nodes[i+1].x - offx2 / lanesforward * j,nodes[i+1].y - offy2 / lanesforward * j);
+                forward[j].points[i] = new Point(nodes[i].x + offx / (lanesforward*2) * ((lanesforward-j)*2-1),nodes[i].y + offy / (lanesforward*2) * ((lanesforward-j)*2-1));
+                forward[j].points[i+1] = new Point(nodes[i+1].x + offx / (lanesforward*2) * ((lanesforward-j)*2-1),nodes[i+1].y + offy / (lanesforward*2) * ((lanesforward-j)*2-1));
             }
             for(int j = 0; j<lanesbackward;j++){
 
-                backward[j][i] = new Point(nodes[i].x + offx / lanesbackward * j,nodes[i].y + offy / lanesbackward * j);
-                backward[j][i+1] = new Point(nodes[i+1].x + offx / lanesbackward * j,nodes[i+1].y + offy / lanesbackward * j);
+                backward[j].points[i] = new Point(nodes[i].x - offx2 / (lanesbackward*2) * ((lanesbackward-j)*2-1),nodes[i].y - offy2 / (lanesbackward *2) * ((lanesbackward-j)*2-1));
+                backward[j].points[i+1] = new Point(nodes[i+1].x - offx2 / (lanesbackward *2) * ((lanesbackward-j)*2-1),nodes[i+1].y - offy2 / (lanesbackward*2) * ((lanesbackward-j)*2-1));
             }
 
         }
