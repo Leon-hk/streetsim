@@ -281,10 +281,22 @@ public class MapParser extends DefaultHandler{
         } else if (qName.equalsIgnoreCase("relation")) {
             relation = false;
             if (!landuse.equals("")) {
+                Point[] nodecache = new Point[0];
                 for(String member: members) {
                     try {
-                        terrain.add(new Terrain(landuse, terrain_cache.get(member).nodes));
+                        if (!landuse.equals("water")) {
+                            terrain.add(new Terrain(landuse, terrain_cache.get(member).nodes));
+                        } else {
+                            Point[] addnodes = terrain_cache.get(member).nodes;
+                            Point[] newnodes = new Point[nodecache.length + addnodes.length];
+                            System.arraycopy(nodecache, 0, newnodes, 0, nodecache.length);
+                            System.arraycopy(addnodes, 0, newnodes, nodecache.length, addnodes.length);
+                            nodecache = newnodes;
+                        }
                     } catch (Exception e) {}
+                }
+                if(landuse.equals("water")) {
+                    terrain.add(new Terrain(landuse, nodecache));
                 }
             }
         }

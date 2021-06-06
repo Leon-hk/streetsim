@@ -1,7 +1,6 @@
 package objects;
 
 import gamelogic.LogicController;
-
 import java.awt.*;
 import java.util.Queue;
 
@@ -101,7 +100,6 @@ public class Terrain {
                 break;
 
 
-
             case "a":
                 this.color = Color.white;
                 draw=false;
@@ -114,7 +112,6 @@ public class Terrain {
                 draw = false;
                 break;
         }
-
         if(draw) {
             int[] xs = new int[nodes.length];
             int[] ys = new int[nodes.length];
