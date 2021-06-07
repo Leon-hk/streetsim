@@ -12,8 +12,8 @@ public class Car {
     double reactiontime = (Math.random() * ((1.3 - 0.8) + 1)) + 0.8;
     double breakingfactor = Math.random() * ((1-0.5)+1) + 0.5;
     double acceleration = Math.random() * ((1-0.5)+1) + 0.5;
-    final int[] xa  = new int[] {-40,40,40,-40};
-    final int[] ya  = new int[] {-40,-40,40,40};
+    final int[] xa  = new int[] {-70,70,70,-70};
+    final int[] ya  = new int[] {-70,-70,70,70};
     Polygon poly1 = new Polygon(xa, ya, 4);
     int x = 0;
     int y = 0;
@@ -29,7 +29,7 @@ public class Car {
     int nodeinstreet = 0;
 
 
-    private Map<String,Point> cords = (Map<String,Point>) LogicController.connections[2];
+    private Map<String,Point> cords = (Map<String,Point>) LogicController.cords;
 
     MyObject object;
     public Car(String origin,String destination){
@@ -53,7 +53,7 @@ public class Car {
         x = cords.get(origin).x;
         y = cords.get(origin).y;
 
-        object=  new MyObject(new Polygon[] {poly1},1,new Color(110, 255, 78));
+        object=  new MyObject(new Polygon[] {poly1},1,new Color(230, 0, 255));
         move(x,y);
 
         LogicController.cars.add(object);
@@ -78,6 +78,7 @@ public class Car {
     }
 
     public boolean update(){
+
         if(streetindex < path.size()+1){
 
             if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])+dir){
@@ -85,10 +86,12 @@ public class Car {
                 int dx = lanes[lane].points[nodeinstreet].x - x;
                 int dy = lanes[lane].points[nodeinstreet].y - y;
 
-                if((dx > 0 != dxp) | (dy >0 != dyp)  | (dx == 0) | (dy == 0) ){
-                    move(lanes[lane].points[nodeinstreet].x, lanes[lane].points[nodeinstreet].y);
+
+                if((dx > 0 != dxp) || (dy >0 != dyp)  || (dx == 0) || (dy == 0) ){
+
                     nodeinstreet += dir;
-                    System.out.println(dx);
+
+
                     if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1) {
                         dx = lanes[lane].points[nodeinstreet].x - x;
                         dy = lanes[lane].points[nodeinstreet].y - y;
@@ -107,7 +110,7 @@ public class Car {
                     update();
                 }
                 else {
-                    double scale = 100 / Math.sqrt(dx * dx + dy * dy);
+                    double scale = currentstreet.maxspeed/3.6/LogicController.TIMEINTERVAL*1000 / Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
 
 
                     move((int) (x + dx * scale), (int) (y + dy * scale));
@@ -117,7 +120,10 @@ public class Car {
 
             }
             else{
-                if(streetindex >= path.size()){return false;}
+                if(streetindex >= path.size()){
+
+                    return false;
+                }
 
                 currentstreet = (Street) path.get(streetindex)[2];
                 lanes[lane].cars.remove(this);
@@ -131,6 +137,8 @@ public class Car {
                 }
                 nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(path.get(streetindex-1)[0]));
                 streetindex++;
+
+
                 lane = 0;
                 lanes[lane].cars.add(this);
 
@@ -149,7 +157,9 @@ public class Car {
             //reached end of destination
             LogicController.cars.remove(object);
             object = null;
+
             return false;
+
         }
     return true;
     }

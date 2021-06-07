@@ -30,7 +30,7 @@ public class MapParser extends DefaultHandler{
     double width;
 
     private Map<String,Object[]> connections = new HashMap<>();
-    Map<String,Point> cords = new HashMap<>();
+     Map<String,Point> cords = new HashMap<>();
     private Map<String,Object[]> nodeconnections = new HashMap<>();
     Map<String, double[]> map = new HashMap<>();
     private ArrayList<String> ids;

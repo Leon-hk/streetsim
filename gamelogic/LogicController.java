@@ -5,14 +5,17 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 public class LogicController{
 
 
-
+    public static int TIMEINTERVAL = 100;
     public static ArrayList<MyObject> terrain = new ArrayList<>();
     public static ArrayList<MyObject> streets = new ArrayList<>();
     public static ArrayList<MyObject> cars = new ArrayList<>();
@@ -21,7 +24,10 @@ public class LogicController{
 
     public static ArrayList<MyObject>[] visible = new ArrayList[] {new ArrayList(),new ArrayList(),new ArrayList()};
     public static MapParser handler;
-    public static Object[] connections = new Object[]{};
+    //public static Object[] connections = new Object[]{};
+    public static Map<String,Point> cords = Collections.emptyMap();
+    public static Map<String,Object[]> connections = Collections.emptyMap();
+    public static Map<String,Object[]> nodeconnections = Collections.emptyMap();
 
     private boolean running = false;
 
@@ -48,7 +54,7 @@ public class LogicController{
 
                 }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(TIMEINTERVAL-95);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -80,7 +86,11 @@ public class LogicController{
 
             handler = new MapParser();
             saxParser.parse(filename, handler);
-            connections = handler.getConnections();
+
+            connections =(Map<String, Object[]>) handler.getConnections()[0];
+            nodeconnections = (Map<String, Object[]>) handler.getConnections()[1];
+            cords = (Map<String, Point>) handler.getConnections()[2];
+
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
