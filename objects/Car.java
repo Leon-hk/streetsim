@@ -33,35 +33,47 @@ public class Car {
 
     MyObject object;
     public Car(String origin,String destination){
+
+
         path = gamelogic.Pathfinding.find_path(origin,destination);
 
-        currentstreet = (Street)path.get(streetindex)[2];
-        streetindex++;
-        if((int)(path.get(streetindex)[3]) == 1){
-            lanes = currentstreet.forward;
-            dir = 1;
-        }
-        else{
-            lanes = currentstreet.backward;
-            dir = -1;
-        }
-        lane = 0;
-        lanes[lane].cars.add(this);
 
-        nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(origin));
 
-        x = cords.get(origin).x;
-        y = cords.get(origin).y;
 
-        object=  new MyObject(new Polygon[] {poly1},1,new Color(230, 0, 255));
-        move(x,y);
 
-        LogicController.cars.add(object);
+        if(path!=null) {
+
+            currentstreet = (Street) path.get(streetindex)[2];
+            streetindex++;
+            if ((int) (path.get(streetindex)[3]) == 1) {
+                lanes = currentstreet.forward;
+
+                dir = 1;
+            } else {
+                lanes = currentstreet.backward;
+                dir = -1;
+            }
+            lane = 0;
+            if(lanes.length != 0){
+            lanes[lane].cars.add(this);
+
+            nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(origin));
+
+            x = cords.get(origin).x;
+            y = cords.get(origin).y;
+
+            object = new MyObject(new Polygon[]{poly1}, 1, new Color(242, 116, 255));
+            move(x, y);
+
+            LogicController.cars.add(object);
+        }}
+
 
     }
 
     public void move(int posx,int posy){
         x = posx;
+
         y = posy;
         int[] xp = xa.clone();
         int[] yp = ya.clone();
@@ -78,6 +90,10 @@ public class Car {
     }
 
     public boolean update(){
+        if(path==null || lanes.length == 0){
+            LogicController.cars.remove(object);
+            return false;
+        }
 
         if(streetindex < path.size()+1){
 
@@ -121,7 +137,7 @@ public class Car {
             }
             else{
                 if(streetindex >= path.size()){
-
+                    LogicController.cars.remove(object);
                     return false;
                 }
 

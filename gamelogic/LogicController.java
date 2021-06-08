@@ -54,7 +54,7 @@ public class LogicController{
 
                 }
                 try {
-                    Thread.sleep(TIMEINTERVAL-95);
+                    Thread.sleep(TIMEINTERVAL-70);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -68,6 +68,19 @@ public class LogicController{
                 visible = new ArrayList[]{terrain, streets, cars};
                 try {
                     Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    Thread car_spawning = new Thread("Logic:car_spawning"){
+        public void run(){
+            while (running){
+                Car_Spawning.loop();
+                try {
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -105,6 +118,7 @@ public class LogicController{
         caraiThead.start();
         controls.start();
         visibilty.start();
+        car_spawning.start();
         this.running = true;
     }
     public synchronized void stop(){

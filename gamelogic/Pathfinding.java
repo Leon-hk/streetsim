@@ -15,14 +15,15 @@ public class Pathfinding {
     static String id2 = "";
     static double maxdist = 0;
     static boolean found = false;
-    static ArrayList<Object[]> mindist = new ArrayList<Object[]>();
-
+    static ArrayList<Object[]> mindist = null;
+    static long startTime= 0;
     static ArrayList<String> possible_crossings = new ArrayList<>();
 
     public static ArrayList<Object[]> find_path(String id1, String id2a) {
         maxdist = 0;
+        startTime = System.nanoTime();
         found = false;
-        mindist = new ArrayList<Object[]>();
+        mindist = null;
         possible_crossings = new ArrayList<>();
         travelled = new ArrayList<>();
         id2 = id2a;
@@ -44,6 +45,7 @@ public class Pathfinding {
 
             Object obs = ((Object[]) obj)[0];
             possible_crossings.add((String) obs);
+
             double dist = Math.sqrt(Math.pow(LogicController.cords.get(obs).x - x, 2) + Math.pow(LogicController.cords.get(obs).y - y, 2));
             if (dist > maxdist) {
                 maxdist = dist;
@@ -53,21 +55,17 @@ public class Pathfinding {
 
         }
         //Searches starting points around the first node
-        search(new Object[]{id1,new ArrayList<Object[]>()});
 
-        while(!found){
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
+        search(new Object[]{id1,new ArrayList<Object[]>()});
 
         return mindist;
     }
 
     private static void search(Object[] start2) {
-        if(!found){
+
+        if(!found && (System.nanoTime()-startTime)<100000000){
+
             Object[] start = start2.clone();
             Map<String,Object[]> distmap = new TreeMap<String,Object[]>();
             for (Object node2 : ((Object[]) connections.get((String) start[0])[1])) {
@@ -87,7 +85,7 @@ public class Pathfinding {
 
                                 pathbuffer.add((Object[]) conn); //adds current node to path
                                 mindist = pathbuffer;
-                                System.out.println("found");
+
                                 found = true;
                             }
                         }
