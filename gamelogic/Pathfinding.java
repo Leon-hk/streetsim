@@ -1,5 +1,6 @@
 package gamelogic;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -85,6 +86,7 @@ public class Pathfinding {
 
                                 pathbuffer.add((Object[]) conn); //adds current node to path
                                 mindist = pathbuffer;
+                                System.out.println(Arrays.deepToString(mindist.get(1)));
 
                                 found = true;
                             }

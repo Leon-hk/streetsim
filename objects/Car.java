@@ -15,8 +15,8 @@ public class Car {
     final int[] xa  = new int[] {-70,70,70,-70};
     final int[] ya  = new int[] {-70,-70,70,70};
     Polygon poly1 = new Polygon(xa, ya, 4);
-    int x = 0;
-    int y = 0;
+    public int x = 0;
+    public int y = 0;
     private boolean dxp = false;
     private boolean dyp = false;
 

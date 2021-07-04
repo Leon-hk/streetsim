@@ -115,11 +115,12 @@ public class LogicController{
         start();
     }
     public synchronized void start(){
+        this.running = true;
         caraiThead.start();
         controls.start();
         visibilty.start();
         car_spawning.start();
-        this.running = true;
+
     }
     public synchronized void stop(){
         this.running = false;

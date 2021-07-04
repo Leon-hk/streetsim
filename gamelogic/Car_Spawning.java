@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class Car_Spawning{
-    public static int carmax = 10000;
+    public static int carmax = 1000;
     private static ArrayList<String> keyset = new ArrayList<>(LogicController.connections.keySet());
     private static Random r = new Random();
     public static void new_car(){
@@ -25,6 +25,7 @@ public class Car_Spawning{
         //TODO daytime related spawning
         while(LogicController.carai.size() < carmax){
             new_car();
+
 
         }
 

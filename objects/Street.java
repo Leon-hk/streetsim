@@ -58,7 +58,7 @@ public class Street {
                 break;
 
             case "living_street":
-
+                this.maxspeed = 15;
                 this.color = new Color(255, 0, 0);
 
                 break;

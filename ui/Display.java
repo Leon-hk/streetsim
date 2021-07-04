@@ -111,6 +111,7 @@ public class Display extends Canvas implements Runnable{
         stop();
     }
     private void render(){
+
         BufferStrategy bs = this.getBufferStrategy();
         if(bs == null){
             this.createBufferStrategy(3);
@@ -140,7 +141,6 @@ public class Display extends Canvas implements Runnable{
                         ys[i] = frame.getHeight() / 2 - ys[i];
 
                     }
-
 
                     g.fillPolygon(xs, ys, xs.length);
 
