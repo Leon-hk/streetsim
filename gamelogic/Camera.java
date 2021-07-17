@@ -1,8 +1,8 @@
 package gamelogic;
 
 public class Camera {
-    public static double posx = -733481;
-    public static double posy = 1057907;
+    public static double posx = 10000;
+    public static double posy = 10000;
 
     public static double zoom = 0.01;
 

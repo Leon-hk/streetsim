@@ -47,16 +47,25 @@ public class LogicController{
     Thread caraiThead = new Thread("Logic:carai"){
         public void run() {
             while (running) {
-                for (Car car : new ArrayList<Car>(carai)) {
-                    if (!car.update()) {
-                        carai.remove(car);
-                    }
+                if (!Controls.pause) {
+                    for (Car car : new ArrayList<Car>(carai)) {
+                        if (!car.update()) {
+                            carai.remove(car);
+                        }
 
+                    }
+                    try {
+                        Thread.sleep(TIMEINTERVAL - 70);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                try {
-                    Thread.sleep(TIMEINTERVAL-70);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                else{
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

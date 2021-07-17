@@ -1,5 +1,6 @@
 package gamelogic;
 
+import objects.Car;
 import ui.Display;
 
 
@@ -14,8 +15,9 @@ public class Controls{
 
     private static Point lastpos = new Point();
     private static boolean pressed = false;
+    private static boolean rpressed = false;
     private static ArrayList<String> keys = new ArrayList<>();
-
+    public static boolean pause = false;
 
     public static KeyListener key = new KeyListener() {
         @Override
@@ -44,6 +46,10 @@ public class Controls{
         @Override
         public void mousePressed(MouseEvent e) {
             pressed = true;
+            if(e.getButton()==3){
+                rpressed=true;
+            }
+
             lastpos = new Point(e.getLocationOnScreen());
 
 
@@ -52,6 +58,7 @@ public class Controls{
         @Override
         public void mouseReleased(MouseEvent e) {
             pressed = false;
+            rpressed = false;
         }
 
         @Override
@@ -95,11 +102,45 @@ public class Controls{
             int dy = MouseInfo.getPointerInfo().getLocation().y -lastpos.y;
 
             lastpos = MouseInfo.getPointerInfo().getLocation();
+            //reverse Coordinate grabbing
+
+            if(rpressed) {
+                rpressed = false;
+
+                Point corner = Display.display.getLocationOnScreen();
+                Point middle = new Point(corner.x + Display.frame.getWidth() / 2, corner.y + Display.frame.getHeight() / 2);
+                Point posinwin = new Point(lastpos.x - middle.x, lastpos.y - middle.y);
+                Point ingame = new Point((int) (posinwin.x / Camera.zoom + Camera.posx), (int) (-posinwin.y / Camera.zoom + Camera.posy));
+                ArrayList<Car> carai2 = (ArrayList<Car>) LogicController.carai.clone();
+                System.out.println(ingame);
+                for(Car car:carai2){
+
+                    if(Math.abs(car.x-ingame.x)<300 && Math.abs(car.y-ingame.y)<300){
+
+                        car.print();
+                        car.object.color=Color.red;
+
+                    }
+                }
+
+            }
 
             Camera.move(-dx / Camera.zoom,dy / Camera.zoom);
 
         }
+        if(keys.contains("32")){
+            keys.remove("32");
 
+            if(pause){
+                pause=false;
+                System.out.println("pause off");
+            }
+            else{
+                pause=true;
+                System.out.println("pause");
+            }
+
+        }
         if (keys.contains("87")) {
 
             Camera.move(0, 7 / Camera.zoom);

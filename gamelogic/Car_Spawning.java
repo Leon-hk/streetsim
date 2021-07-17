@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 
+import static gamelogic.Controls.pause;
+
 public class Car_Spawning{
     public static int carmax = 10000;
     private static ArrayList<String> keyset = new ArrayList<>(LogicController.connections.keySet());
@@ -23,7 +25,7 @@ public class Car_Spawning{
     public static void loop(){
 
         //TODO daytime related spawning
-        while(LogicController.carai.size() < carmax){
+        while(LogicController.carai.size() < carmax && !pause){
             new_car();
 
         }

@@ -1,8 +1,11 @@
 package objects;
 
+import gamelogic.Camera;
+import gamelogic.Controls;
 import gamelogic.LogicController;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -15,8 +18,8 @@ public class Car {
     final int[] xa  = new int[] {-70,70,70,-70};
     final int[] ya  = new int[] {-70,-70,70,70};
     Polygon poly1 = new Polygon(xa, ya, 4);
-    int x = 0;
-    int y = 0;
+    public int x = 0;
+    public int y = 0;
     private boolean dxp = false;
     private boolean dyp = false;
 
@@ -31,7 +34,7 @@ public class Car {
 
     private Map<String,Point> cords = (Map<String,Point>) LogicController.cords;
 
-    MyObject object;
+    public MyObject object;
     public Car(String origin,String destination){
 
 
@@ -45,7 +48,9 @@ public class Car {
 
             currentstreet = (Street) path.get(streetindex)[2];
             streetindex++;
-            if ((int) (path.get(streetindex)[3]) == 1) {
+            nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(origin));
+
+            if ((int)(path.get(streetindex-1)[4])-nodeinstreet >0) {
                 lanes = currentstreet.forward;
 
                 dir = 1;
@@ -53,11 +58,12 @@ public class Car {
                 lanes = currentstreet.backward;
                 dir = -1;
             }
+
             lane = 0;
             if(lanes.length != 0){
             lanes[lane].cars.add(this);
 
-            nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(origin));
+
 
             x = cords.get(origin).x;
             y = cords.get(origin).y;
@@ -88,7 +94,17 @@ public class Car {
         object.polys = new Polygon[] {new Polygon(xp,yp,object.polys[0].npoints)};
 
     }
+    public void print(){
 
+        System.out.println("");
+        System.out.println();
+        System.out.println("pos:" + x + "/" + y);
+        System.out.println("lane:" + lane);
+        System.out.println("nodeinstreet:" + nodeinstreet + "/" + lanes[0].points.length + "/" + (int)(path.get(streetindex-1)[4]));
+        System.out.println("streetind:" + streetindex + "/" + path.size());
+        System.out.println("path:" + Arrays.asList(currentstreet.nodes).indexOf(cords.get(path.get(streetindex-1)[0])) + "->" + path.get(streetindex-1)[4]);
+        System.out.println("dir:"+ dir);
+    }
     public boolean update(){
         if(path==null || lanes.length == 0){
             LogicController.cars.remove(object);
@@ -97,7 +113,7 @@ public class Car {
 
         if(streetindex < path.size()+1){
 
-            if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])+dir){
+            if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])){
 
                 int dx = lanes[lane].points[nodeinstreet].x - x;
                 int dy = lanes[lane].points[nodeinstreet].y - y;
@@ -106,6 +122,7 @@ public class Car {
                 if((dx > 0 != dxp) || (dy >0 != dyp)  || (dx == 0) || (dy == 0) ){
 
                     nodeinstreet += dir;
+
 
 
                     if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1) {
@@ -122,6 +139,14 @@ public class Car {
                         } else {
                             dyp = false;
                         }
+                    }
+                    else{
+                        System.out.println("fuk");
+                        System.out.println(nodeinstreet);
+                        System.out.println(lanes[0].points.length);
+                        System.out.println(x + "/" + y);
+                        Camera.moveto(x,y);
+
                     }
                     update();
                 }

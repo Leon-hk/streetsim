@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Display extends Canvas implements Runnable{
-    public JFrame frame;
+    public static JFrame frame;
 
     private Thread thread;
     private static String title = "Straßensimulation Kreis Höxter";
