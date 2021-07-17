@@ -28,6 +28,7 @@ public class Controls{
         @Override
         public void keyPressed(KeyEvent e) {
             keys.add(Integer.toString(e.getKeyCode()));
+
         }
 
         @Override
@@ -51,7 +52,13 @@ public class Controls{
             }
 
             lastpos = new Point(e.getLocationOnScreen());
+            System.out.println(e.getLocationOnScreen());
 
+            //TODO get car info on button press
+            /*for(Car car : LogicController.carai){
+                int ingameposx =
+                if(car.x < lastpos.x.)
+            }*/
 
         }
 
@@ -97,6 +104,7 @@ public class Controls{
     };
 
     public static void update() {
+
         if(pressed){
             int dx = MouseInfo.getPointerInfo().getLocation().x -lastpos.x;
             int dy = MouseInfo.getPointerInfo().getLocation().y -lastpos.y;

@@ -105,7 +105,6 @@ public class Terrain {
 
             default:
 
-                //System.out.println(this.type);
                 this.color = Color.white;
                 draw = false;
                 break;
