@@ -86,7 +86,7 @@ public class Pathfinding {
 
                                 pathbuffer.add((Object[]) conn); //adds current node to path
                                 mindist = pathbuffer;
-                                System.out.println(Arrays.deepToString(mindist.get(1)));
+
 
                                 found = true;
                             }

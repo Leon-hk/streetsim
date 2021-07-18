@@ -52,7 +52,6 @@ public class Controls{
             }
 
             lastpos = new Point(e.getLocationOnScreen());
-            System.out.println(e.getLocationOnScreen());
 
             //TODO get car info on button press
             /*for(Car car : LogicController.carai){
@@ -120,14 +119,17 @@ public class Controls{
                 Point posinwin = new Point(lastpos.x - middle.x, lastpos.y - middle.y);
                 Point ingame = new Point((int) (posinwin.x / Camera.zoom + Camera.posx), (int) (-posinwin.y / Camera.zoom + Camera.posy));
                 ArrayList<Car> carai2 = (ArrayList<Car>) LogicController.carai.clone();
-                System.out.println(ingame);
+
                 for(Car car:carai2){
 
                     if(Math.abs(car.x-ingame.x)<300 && Math.abs(car.y-ingame.y)<300){
 
                         car.print();
-                        car.object.color=Color.red;
-
+                        if(car.object.color!=Color.red) {
+                            car.object.color = Color.red;
+                        }else{
+                            car.object.color=Color.pink;
+                        }
                     }
                 }
 
@@ -141,11 +143,11 @@ public class Controls{
 
             if(pause){
                 pause=false;
-                System.out.println("pause off");
+
             }
             else{
                 pause=true;
-                System.out.println("pause");
+
             }
 
         }

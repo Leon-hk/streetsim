@@ -13,8 +13,10 @@ import java.util.Map;
 public class Car {
 
     double reactiontime = (Math.random() * ((1.3 - 0.8) + 1)) + 0.8;
-    double breakingfactor = Math.random() * ((1-0.5)+1) + 0.5;
-    double acceleration = Math.random() * ((1-0.5)+1) + 0.5;
+    double breakingfactor = Math.random() * ((0.1-0.05)) + 0.05;
+    double acceleration = Math.random() * ((0.05-0.02)) + 0.02;
+    double personalspeed = (Math.random() * ((1.1 - 0.6))) + 0.6;
+    double speed = personalspeed;
     final int[] xa  = new int[] {-70,70,70,-70};
     final int[] ya  = new int[] {-70,-70,70,70};
     Polygon poly1 = new Polygon(xa, ya, 4);
@@ -39,10 +41,6 @@ public class Car {
 
 
         path = gamelogic.Pathfinding.find_path(origin,destination);
-
-
-
-
 
         if(path!=null) {
 
@@ -73,7 +71,6 @@ public class Car {
 
             LogicController.cars.add(object);
         }}
-
 
     }
 
@@ -113,7 +110,7 @@ public class Car {
 
         if(streetindex < path.size()+1){
 
-            if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4])){
+            if(nodeinstreet<lanes[0].points.length && nodeinstreet > -1 && nodeinstreet != (int)(path.get(streetindex-1)[4]) + dir){
 
                 int dx = lanes[lane].points[nodeinstreet].x - x;
                 int dy = lanes[lane].points[nodeinstreet].y - y;
@@ -140,21 +137,70 @@ public class Car {
                             dyp = false;
                         }
                     }
-                    else{
-                        System.out.println("fuk");
-                        System.out.println(nodeinstreet);
-                        System.out.println(lanes[0].points.length);
-                        System.out.println(x + "/" + y);
-                        Camera.moveto(x,y);
 
-                    }
                     update();
                 }
                 else {
-                    double scale = currentstreet.maxspeed/3.6/LogicController.TIMEINTERVAL*1000 / Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
+                    double scale = currentstreet.maxspeed/3.6/LogicController.TIMEINTERVAL*1000 / Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2)) * speed;
 
+                    double acc = 1;
+
+                    for(Car car : lanes[lane].cars){
+                        if(car!=this) {
+
+                            double dist = Math.abs(Math.sqrt(Math.pow(x - car.x, 2) + Math.pow(y - car.y, 2)));
+                            if((x<car.x)==dxp && (y<car.y)==dyp){
+                            if (dist < 3000) {
+                                if(dist<1){dist=1;}
+
+
+
+
+                                if (lane < lanes.length - 1) {
+                                    lane++;
+                                } else {
+                                    double save = acc;
+                                    acc = -(3000-dist)/3000 * speed-car.speed;
+
+                                }
+                            }
+                            else{
+                                double save = acc;
+                                if(acc>0) {
+                                    if (dist < 5000) {
+
+                                        acc = (dist - 1000) / 4000;
+                                    } else {
+                                        acc = 1;
+                                    }
+                                    if (acc > save) {
+                                        acc = save;
+                                    }
+                                }
+                            }
+                            if(object.color==Color.red){
+                                System.out.println("\n infront:"+Boolean.toString((x<car.x)==dxp && (y<car.y)==dyp));
+                                System.out.println(" dist:"+ dist);
+                                System.out.println("braking:"+ (1000-dist)/1000 * breakingfactor * LogicController.TIMEINTERVAL/100);
+                                System.out.println("acc:" + acceleration*LogicController.TIMEINTERVAL/100);
+
+                            }
+                        }
+                        }
+                    }
+                    speed+=   acc * acceleration * LogicController.TIMEINTERVAL/100;
+                    if(speed>personalspeed){
+                        speed = personalspeed;
+                    }
+
+                    if(speed<0){
+                        speed = 0;
+                    }
 
                     move((int) (x + dx * scale), (int) (y + dy * scale));
+                    if(object.color==Color.RED){
+                        Camera.moveto(x,y);
+                    }
                 }
                 //move(lanes[lane].points[nodeinstreet].x,lanes[lane].points[nodeinstreet].y);
 
