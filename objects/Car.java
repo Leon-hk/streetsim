@@ -3,19 +3,16 @@ package objects;
 import gamelogic.Camera;
 import gamelogic.Controls;
 import gamelogic.LogicController;
-
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 public class Car {
-
-    double reactiontime = (Math.random() * ((1.3 - 0.8) + 1)) + 0.8;
-    double breakingfactor = Math.random() * ((0.1-0.05)) + 0.05;
-    double acceleration = Math.random() * ((0.05-0.02)) + 0.02;
-    double personalspeed = (Math.random() * ((1.1 - 0.6))) + 0.6;
+    int maxdist = 2000;
+    boolean reported = false;
+    double personalspeed = (Math.random() * (1.1 - 0.6)) + 0.6;
+    private double shortest = 5000;
     double speed = personalspeed;
     final int[] xa  = new int[] {-70,70,70,-70};
     final int[] ya  = new int[] {-70,-70,70,70};
@@ -56,8 +53,9 @@ public class Car {
                 lanes = currentstreet.backward;
                 dir = -1;
             }
-
-            lane = 0;
+            if(lanes.length < lane + 1) {
+                lane = lanes.length-1;
+            }
             if(lanes.length != 0){
             lanes[lane].cars.add(this);
 
@@ -101,6 +99,33 @@ public class Car {
         System.out.println("streetind:" + streetindex + "/" + path.size());
         System.out.println("path:" + Arrays.asList(currentstreet.nodes).indexOf(cords.get(path.get(streetindex-1)[0])) + "->" + path.get(streetindex-1)[4]);
         System.out.println("dir:"+ dir);
+        System.out.println("short:" + shortest);
+        System.out.println("speed:" + speed);
+        System.out.println("persspeed:" + personalspeed);
+
+    }
+    private Object[] get_shortest(int lane){
+        double acc = 1.1;
+        shortest = 5000;
+        Car shortestc = this;
+
+
+        for(Car car : lanes[lane].cars) {
+            if (car != this) {
+
+                double dist = Math.abs(Math.sqrt(Math.pow(x - car.x, 2) + Math.pow(y - car.y, 2)));
+                if ((x < car.x) == dxp && (y < car.y) == dyp) {
+
+                    if(dist<shortest && car.speed < speed + 0.1) {
+
+                        acc = dist / maxdist;
+                        shortest = dist;
+                        shortestc = car;
+                    }
+                }
+            }
+        }
+        return new Object[]{acc,shortest,shortestc};
     }
     public boolean update(){
         if(path==null || lanes.length == 0){
@@ -141,65 +166,47 @@ public class Car {
                     update();
                 }
                 else {
-                    double scale = currentstreet.maxspeed/3.6/LogicController.TIMEINTERVAL*1000 / Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2)) * speed;
 
-                    double acc = 1;
-
-                    for(Car car : lanes[lane].cars){
-                        if(car!=this) {
-
-                            double dist = Math.abs(Math.sqrt(Math.pow(x - car.x, 2) + Math.pow(y - car.y, 2)));
-                            if((x<car.x)==dxp && (y<car.y)==dyp){
-                            if (dist < 3000) {
-                                if(dist<1){dist=1;}
+                    Object[] data = get_shortest(lane);
+                    double acc = (double)data[0];
+                    double shortest = (double)data[1];
+                    Car shortestc = (Car)data[2];
 
 
 
 
-                                if (lane < lanes.length - 1) {
-                                    lane++;
-                                } else {
-                                    double save = acc;
-                                    acc = -(3000-dist)/3000 * speed-car.speed;
 
-                                }
-                            }
-                            else{
-                                double save = acc;
-                                if(acc>0) {
-                                    if (dist < 5000) {
-
-                                        acc = (dist - 1000) / 4000;
-                                    } else {
-                                        acc = 1;
-                                    }
-                                    if (acc > save) {
-                                        acc = save;
-                                    }
-                                }
-                            }
-                            if(object.color==Color.red){
-                                System.out.println("\n infront:"+Boolean.toString((x<car.x)==dxp && (y<car.y)==dyp));
-                                System.out.println(" dist:"+ dist);
-                                System.out.println("braking:"+ (1000-dist)/1000 * breakingfactor * LogicController.TIMEINTERVAL/100);
-                                System.out.println("acc:" + acceleration*LogicController.TIMEINTERVAL/100);
-
-                            }
-                        }
+                    if(shortest < maxdist && shortestc.speed < personalspeed -0.1 && lanes.length > lane +1){
+                        lane++;
+                        if(!reported) {
+                            reported = true;
+                            Controls.pause = true;
+                            Camera.moveto(x, y);
                         }
                     }
-                    speed+=   acc * acceleration * LogicController.TIMEINTERVAL/100;
+                    else {
+                        if(lane>0) {
+                            if (get_shortest(lane - 1)[2] == this) {
+                                lane--;
+                            }
+                        }
+                        speed = acc * shortestc.speed;
+                    }
                     if(speed>personalspeed){
                         speed = personalspeed;
                     }
 
-                    if(speed<0){
-                        speed = 0;
-                    }
+                    if(!(speed<0.1)) {
 
-                    move((int) (x + dx * scale), (int) (y + dy * scale));
+
+                        double scale = currentstreet.maxspeed/3.6/LogicController.TIMEINTERVAL*1000 / Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2)) * speed;
+                        move((int) (x + dx * scale), (int) (y + dy * scale));
+                    }
                     if(object.color==Color.RED){
                         Camera.moveto(x,y);
+                        System.out.println(shortest);
+                        System.out.println(shortestc.speed);
+
                     }
                 }
                 //move(lanes[lane].points[nodeinstreet].x,lanes[lane].points[nodeinstreet].y);
@@ -225,8 +232,9 @@ public class Car {
                 nodeinstreet = Arrays.asList(currentstreet.nodes).indexOf(cords.get(path.get(streetindex-1)[0]));
                 streetindex++;
 
-
-                lane = 0;
+                if(lanes.length < lane + 1) {
+                    lane = lanes.length-1;
+                }
                 lanes[lane].cars.add(this);
 
                 int dx = lanes[lane].points[nodeinstreet].x - x;

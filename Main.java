@@ -9,9 +9,5 @@ class Main {
 
         LogicController logic = new LogicController();
 
-
-
-
-
     }
 }
